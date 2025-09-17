@@ -144,6 +144,10 @@
             statusMsg.textContent = error || "Error submitting report.";
             statusMsg.style.color = "red";
         });
+
+        socket.on('notify-client', (message) => {
+            alert(message || "You have a new notification from the server.");
+        });
     </script>
     <script>
       const map = L.map('map').setView([51.505, -0.09], 13);
