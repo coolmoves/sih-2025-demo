@@ -7,7 +7,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.get('/', (req, res) => {
+app.use(express.static('public'));
+
+app.get('/version', (req, res) => {
   res.json({"version":"demo"});
 });
 
