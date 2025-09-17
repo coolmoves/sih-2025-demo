@@ -26,7 +26,7 @@
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
     <script>
         const socket = io();
-
+        const clientMess = [];
         function sendMessage(value) {
             socket.emit('chat message', message);
             input.value = value;
@@ -37,6 +37,42 @@
             li.textContent = msg;
             document.getElementById('messages').appendChild(li);
         });
+        socket.on('client-report', function(msg) {
+          const symptom = JSON.parse(msg).symptoms;
+          clientMess.push(symptom);
+        
+          if (clientMess.length >= 3) {
+            const lastThree = clientMess.slice(-3);
+            if (lastThree.every(s => s === lastThree[0])) {
+              // Remove the last 3 elements
+              clientMess.splice(-3, 3);
+        
+              const messagesEl = document.getElementById('messages');
+        
+              const li = document.createElement('li');
+              li.style.color = "yellow";
+              li.textContent = "[SYSTEM] : Multiple reports with same symptoms, Initiating models for detailed analysis.";
+              messagesEl.appendChild(li);
+        
+              const li2 = document.createElement('li');
+              li2.style.color = "yellow";
+              li2.textContent = "[SYSTEM] : Receiving reports from nearby sensors and officials... {STATUS : RECEIVED}";
+              messagesEl.appendChild(li2);
+        
+              const li3 = document.createElement('li');
+              li3.style.color = "yellow";
+              li3.textContent = "[SYSTEM-AI] : Analyzing found 55% disease outbreak under 15km radius of DEMORiver, Reporting officials and sending awareness.";
+              messagesEl.appendChild(li3);
+            }
+          }
+        
+          const li = document.createElement('li');
+          li.style.color = "green";
+          li.textContent = msg;
+          document.getElementById('messages').appendChild(li);
+          socket.emit('server-received-client');
+        });
+
     </script>
 </body>
 </html>
