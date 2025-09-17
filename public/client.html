@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Disease Reporting Client</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet/dist/leaflet.css"
+    />
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #eef2f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 1rem;
+            color: #333;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.25rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .status {
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>JalSudhi - Waterborne Disease Report</h2>
+        <form id="reportForm">
+            <label for="username">Your Name</label>
+            <input type="text" id="username" placeholder="Name" required>
+
+            <label for="location">Location</label>
+            <div id="map" style="height: 100px;border:2px solid black;"></div>
+            <input type="text" id="location" placeholder="Location" required>
+
+            <label for="symptoms">Symptoms Observed</label>
+            <textarea id="symptoms" rows="3" required placeholder="Symptoms serperated by commas."></textarea>
+
+            <label for="source">Water Source</label>
+            <select id="source" required>
+                <option value="">Select source</option>
+                <option value="Well">Well</option>
+                <option value="Tap">Tap</option>
+                <option value="River">River</option>
+                <option value="Tank">Tank</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <button type="submit">Submit Report</button>
+        </form>
+
+        <div class="status" id="statusMsg"></div>
+    </div>
+
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const socket = io();
+
+        const form = document.getElementById('reportForm');
+        const statusMsg = document.getElementById('statusMsg');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const reportData = {
+                username: document.getElementById('username').value,
+                location: document.getElementById('location').value,
+                symptoms: document.getElementById('symptoms').value,
+                waterSource: document.getElementById('source').value,
+                timestamp: new Date().toISOString()
+            };
+
+            socket.emit('client-report', reportData);
+
+            statusMsg.textContent = "Sending...";
+        });
+
+        socket.on('server-received-client', (message) => {
+            statusMsg.textContent = message || "Report received successfully!";
+            statusMsg.style.color = "green";
+            form.reset();
+        });
+        
+        // Error handler
+        socket.on('report-error', (error) => {
+            statusMsg.textContent = error || "Error submitting report.";
+            statusMsg.style.color = "red";
+        });
+    </script>
+    <script>
+      const map = L.map('map').setView([51.505, -0.09], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+      }).addTo(map);
+
+      L.marker([51.505, -0.09]).addTo(map)
+        .bindPopup('A North East Indian Area')
+        .openPopup();
+    </script>
+
+</body>
+</html>
