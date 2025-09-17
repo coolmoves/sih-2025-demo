@@ -70,7 +70,7 @@
               li3.textContent = "[SYSTEM-AI] : Analyzing... found 55% disease outbreak, Reporting officials and sending awareness to users.";
               messagesEl.appendChild(li3);
 
-              socket.emit('notify-client');
+              socket.emit('notify-client',"Disease outbreak possibility detected,please be careful,we are taking necessary steps to ensure your safety,further details will be informed as soon as possible.");
             }
           }
           socket.emit('server-received-client');
