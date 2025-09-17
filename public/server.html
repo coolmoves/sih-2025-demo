@@ -38,7 +38,7 @@
             document.getElementById('messages').appendChild(li);
         });
         socket.on('client-report', function(msg) {
-          const symptom = JSON.parse(msg).symptoms;
+          const symptom = msg.symptoms;
           clientMess.push(symptom);
         
           if (clientMess.length >= 3) {
