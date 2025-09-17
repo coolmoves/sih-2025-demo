@@ -3,6 +3,9 @@
 <head>
     <title>Server Log</title>
     <style>
+      *{
+          font-family:monospace;
+      }
       html,body{
         margin:0px;
         width:100%;
@@ -40,7 +43,10 @@
         socket.on('client-report', function(msg) {
           const symptom = msg.symptoms;
           clientMess.push(symptom);
-        
+          const m = document.createElement('li');
+          m.style.color = "green";
+          m.textContent = `[CLIENT] : {TYPE:REPORT} : User '${msg.username}' reported '${msg.symptoms}' symptoms [location:${msg.location},src:${msg.waterSource}]`;
+          document.getElementById('messages').appendChild(m);
           if (clientMess.length >= 3) {
             const lastThree = clientMess.slice(-3);
             if (lastThree.every(s => s === lastThree[0])) {
@@ -61,17 +67,12 @@
         
               const li3 = document.createElement('li');
               li3.style.color = "yellow";
-              li3.textContent = "[SYSTEM-AI] : Analyzing found 55% disease outbreak under 15km radius of DEMORiver, Reporting officials and sending awareness.";
+              li3.textContent = "[SYSTEM-AI] : Analyzing... found 55% disease outbreak, Reporting officials and sending awareness to users.";
               messagesEl.appendChild(li3);
 
               socket.emit('notify-client');
             }
           }
-        
-          const li = document.createElement('li');
-          li.style.color = "green";
-          li.textContent = `[CLIENT] : {TYPE:REPORT} : User '${msg.username}' reported '${msg.symptoms}' symptoms [location:${msg.location},src:${msg.waterSource}`;
-          document.getElementById('messages').appendChild(li);
           socket.emit('server-received-client');
         });
 
