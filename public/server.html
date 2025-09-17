@@ -63,12 +63,14 @@
               li3.style.color = "yellow";
               li3.textContent = "[SYSTEM-AI] : Analyzing found 55% disease outbreak under 15km radius of DEMORiver, Reporting officials and sending awareness.";
               messagesEl.appendChild(li3);
+
+              socket.emit('notify-client');
             }
           }
         
           const li = document.createElement('li');
           li.style.color = "green";
-          li.textContent = msg;
+          li.textContent = `[CLIENT] : {TYPE:REPORT} : User '${msg.username}' reported '${msg.symptoms}' symptoms [location:${msg.location},src:${msg.waterSource}`;
           document.getElementById('messages').appendChild(li);
           socket.emit('server-received-client');
         });
