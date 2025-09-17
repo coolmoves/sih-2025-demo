@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Log</title>
+    <style>
+      html,body{
+        margin:0px;
+        width:100%;
+        height:100%;
+      }
+      body{
+        display:flex;
+      }
+      #messages{
+        list-style-type:none;
+        background:#111111;
+        color:#DDD;
+      }
+    </style>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+    <script>
+        const socket = io();
+
+        function sendMessage(value) {
+            socket.emit('chat message', message);
+            input.value = value;
+        }
+
+        socket.on('chat message', function(msg) {
+            const li = document.createElement('li');
+            li.textContent = msg;
+            document.getElementById('messages').appendChild(li);
+        });
+    </script>
+</body>
+</html>
