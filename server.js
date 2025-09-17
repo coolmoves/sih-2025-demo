@@ -20,6 +20,14 @@ io.on('connection', (socket) => {
     console.log('message: ' + msg);
     io.emit('chat message', msg);
   });
+  socket.on('server-received-client', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('server-received-client', msg);
+  });
+  socket.on('client-report', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('client-report', msg);
+  });
 
   socket.on('disconnect', () => {
     console.log('Disconnected');
